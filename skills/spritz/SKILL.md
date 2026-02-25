@@ -1,8 +1,6 @@
 ---
-slug: spritz
-name: Spritz Fiat Rails
+name: spritz
 description: Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools. Use when an agent needs to send payments to bank accounts, convert crypto to fiat, execute off-ramp transactions, or manage bank account payment destinations.
-homepage: https://spritz.finance
 ---
 
 # Spritz Fiat Rails
