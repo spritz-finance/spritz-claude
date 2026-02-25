@@ -1,0 +1,20 @@
+{
+  "name": "spritz",
+  "version": "1.0.0",
+  "description": "Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.",
+  "author": {
+    "name": "Spritz Finance",
+    "email": "support@spritz.finance"
+  },
+  "homepage": "https://spritz.finance",
+  "license": "MIT",
+  "keywords": [
+    "payments",
+    "off-ramp",
+    "crypto",
+    "fiat",
+    "bank-transfer",
+    "mcp",
+    "agentic-rails"
+  ]
+}
