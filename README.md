@@ -1,39 +1,32 @@
-# Spritz Plugin for Claude Code
+# Spritz — Claude Code Plugin
 
-Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.
+Off-ramp crypto to fiat bank accounts with AI agents.
 
-## Installation
+## Quick Start
+
+### 1. Install the plugin
 
 ```bash
 /plugin marketplace add spritz-finance/spritz-claude
 /plugin install spritz@spritz-claude
 ```
 
-Restart Claude Code after installing. The MCP server starts automatically.
+### 2. Add your API key
 
-## Setup
-
-Get your API key from [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys).
-
-Store the key:
+Get a key from [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys), then:
 
 ```bash
 mkdir -p ~/.config/spritz
 echo "your-api-key" > ~/.config/spritz/api_key
 ```
 
-Restart Claude Code to activate.
+### 3. Restart Claude Code
 
-## Updating
+The MCP server starts automatically. You're ready to go.
 
-```bash
-/plugin marketplace update spritz-claude
-/plugin update spritz@spritz-claude
-```
+## Usage
 
-## What's Included
-
-### MCP Tools (via `@spritz-finance/mcp-server`)
+Ask Claude to manage bank accounts, create off-ramp quotes, or execute payments. The plugin provides 7 MCP tools:
 
 | Tool | Description |
 |------|-------------|
@@ -45,15 +38,20 @@ Restart Claude Code to activate.
 | `get_off_ramp_transaction` | Get on-chain transaction params for a quote |
 | `list_off_ramps` | List off-ramp transactions |
 
-### Skill
+The `/spritz:spritz` skill gives Claude the full workflow guide, supported networks/tokens, bank account types, and security rules.
 
-The `/spritz:spritz` skill provides Claude with the full workflow guide, supported networks/tokens, bank account types, and security rules.
+## Updating
+
+```bash
+/plugin marketplace update spritz-claude
+/plugin update spritz@spritz-claude
+```
 
 ## Prerequisites
 
-- **Spritz API key**
-- **Crypto wallet** — the agent must have its own wallet for signing transactions
-- **Node.js >= 18** — for `npx @spritz-finance/mcp-server`
+- **Spritz API key** — [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
+- **Crypto wallet** — the agent needs its own wallet for signing transactions
+- **Node.js >= 18** — for the MCP server (`npx @spritz-finance/mcp-server`)
 
 ## License
 
