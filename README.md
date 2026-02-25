@@ -1,26 +1,28 @@
 # Spritz — Claude Code Plugin
 
-Off-ramp crypto to fiat bank accounts with AI agents.
+Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools in [Claude Code](https://claude.ai/code).
 
 ## Quick Start
 
-### 1. Install the plugin
+### 1. Get your API key
+
+Sign up at [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys).
+
+### 2. Install the plugin
 
 ```bash
 /plugin marketplace add spritz-finance/spritz-claude
 /plugin install spritz@spritz-claude
 ```
 
-### 2. Add your API key
-
-Get a key from [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys), then:
+### 3. Add your API key
 
 ```bash
 mkdir -p ~/.config/spritz
 echo "your-api-key" > ~/.config/spritz/api_key
 ```
 
-### 3. Restart Claude Code
+### 4. Restart Claude Code
 
 The MCP server starts automatically. You're ready to go.
 
@@ -35,10 +37,14 @@ Ask Claude to manage bank accounts, create off-ramp quotes, or execute payments.
 | `delete_bank_account` | Delete a bank account by ID |
 | `create_off_ramp_quote` | Create a crypto-to-fiat quote |
 | `get_off_ramp_quote` | Check quote status |
-| `get_off_ramp_transaction` | Get on-chain transaction params for a quote |
+| `get_off_ramp_transaction` | Get on-chain transaction params |
 | `list_off_ramps` | List off-ramp transactions |
 
-The `/spritz:spritz` skill gives Claude the full workflow guide, supported networks/tokens, bank account types, and security rules.
+Use `/spritz:spritz` to load the full workflow guide with supported networks, bank account types, and security rules.
+
+## Supported Networks
+
+Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC, Solana, Bitcoin, and more.
 
 ## Updating
 
@@ -50,8 +56,8 @@ The `/spritz:spritz` skill gives Claude the full workflow guide, supported netwo
 ## Prerequisites
 
 - **Spritz API key** — [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
-- **Crypto wallet** — coming soon
-- **Node.js >= 18** — for the MCP server (`npx @spritz-finance/mcp-server`)
+- **Node.js >= 18** — for the MCP server
+- **Claude Code** — [claude.ai/code](https://claude.ai/code)
 
 ## License
 
