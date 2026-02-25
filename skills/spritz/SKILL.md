@@ -5,111 +5,193 @@ description: Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tool
 
 # Spritz Fiat Rails
 
-Give AI agents the ability to off-ramp crypto to real bank accounts via Spritz MCP tools.
-
----
+Direct API access to [Spritz Finance](https://spritz.finance) for off-ramping crypto to real bank accounts.
 
 ## Setup
 
-1. Get your API key from [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
-2. Store the key:
-   ```bash
-   mkdir -p ~/.config/spritz
-   echo "your-api-key" > ~/.config/spritz/api_key
-   ```
-3. Restart Claude Code to activate.
+### Get your API key
 
-### Prerequisites
+Sign up at [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys).
 
-- A **crypto wallet** — the agent must have its own wallet (e.g., Privy, Turnkey). Spritz does not provide wallet functionality.
-- **Node.js >= 18** — required for the MCP server (`npx @spritz-finance/mcp-server`)
+### Store the key
 
----
+Set the `SPRITZ_API_KEY` environment variable:
 
-## MCP Tools
+```bash
+export SPRITZ_API_KEY="your-api-key-here"
+```
 
-| Tool | Description |
-|------|-------------|
-| `list_bank_accounts` | List all bank accounts saved as off-ramp payment destinations |
-| `create_bank_account` | Add a new bank account. Type determines required fields: `us` (routing_number, account_number), `ca` (institution_number, transit_number, account_number), `uk` (sort_code, account_number), `iban` (iban, optional bic) |
-| `delete_bank_account` | Delete a bank account by ID |
-| `create_off_ramp_quote` | Create an off-ramp quote to convert crypto to fiat. Returns locked exchange rate, fees, and next steps |
-| `get_off_ramp_quote` | Get an off-ramp quote by ID. Check quote status or re-fetch details |
-| `get_off_ramp_transaction` | Get transaction params for a quote. Returns EVM calldata or serialized Solana transaction. Agent must sign and submit on-chain |
-| `list_off_ramps` | List off-ramp transactions. Filter by status, chain, or destination accountId |
+Or store it in a config file:
 
----
+```bash
+mkdir -p ~/.config/spritz
+echo "your-api-key-here" > ~/.config/spritz/api_key
+```
+
+> **Note:** `SPRITZ_API_KEY` environment variable takes precedence over the config file.
+
+### Requirements
+
+- `curl`
+- `jq`
 
 ## Core Workflow
 
-### 1. Set Up a Bank Account
+1. **Set up a bank account** — Add at least one destination
+2. **Create a quote** — Lock exchange rate, get fulfillment instructions
+3. **Execute payment** — Send crypto or sign a transaction on-chain
+4. **Track status** — Monitor until completed
 
-Before making payments, the agent needs at least one bank account on file.
+## Scripts
 
-```
-→ create_bank_account({ type: "us", name: "Primary checking", routing_number: "021000021", account_number: "123456789" })
-```
+All scripts are in `./scripts/` and use `lib.sh` for shared auth/curl helpers. Base URL: `https://platform.spritz.finance`
 
-### 2. Create an Off-Ramp Quote
+Each script uses subcommands: `./scripts/<script>.sh <command> [args...]`
+Run any script without arguments to see available commands and usage.
 
-```
-→ create_off_ramp_quote({ accountId: "<bank_account_id>", amount: "100.00", network: "base", token: "USDC" })
-```
+### bank-accounts.sh — Bank Account Management
 
-After creating a quote, check the `fulfillment` field:
-- **`send_to_address`**: Send the exact `input.amount` of `input.token` to `sendTo.address` before `sendTo.expiresAt`
-- **`sign_transaction`**: Call `get_off_ramp_transaction` with the quote ID and sender address to get calldata or a serialized transaction, then sign and submit on-chain
-
-Amount modes: set `amountType` to `output` (default) for exact fiat delivery, or `input` for exact crypto spend.
-
-### 3. Execute the Payment
-
-For `sign_transaction` fulfillment:
-```
-→ get_off_ramp_transaction({ quoteId: "<quote_id>", senderAddress: "0x..." })
+```bash
+./scripts/bank-accounts.sh list                    # List all saved bank accounts
+./scripts/bank-accounts.sh create <json_body>      # Add a new bank account
+./scripts/bank-accounts.sh delete <accountId>      # Delete a bank account
 ```
 
-Returns EVM calldata (`contractAddress`, `calldata`, `value`) or a serialized Solana transaction (`transactionSerialized`). The agent must sign and submit on-chain.
-
-### 4. Track Status
-
-```
-→ list_off_ramps({ status: "pending" })
-→ get_off_ramp_quote({ quoteId: "<quote_id>" })
-```
-
----
-
-## Supported Networks and Tokens
-
-| Network | Tokens | Notes |
-|---------|--------|-------|
-| `ethereum` | USDC, USDT, DAI | Higher gas fees |
-| `base` | USDC | Recommended — low fees |
-| `polygon` | USDC, USDT | Low fees |
-| `arbitrum` | USDC | Low fees |
-| `optimism` | USDC | Low fees |
-| `avalanche` | USDC | Low fees |
-| `bsc` | USDC, BUSD | Low fees |
-
-**Recommendation:** Use USDC on Base for lowest fees and fastest settlement.
-
----
-
-## Bank Account Types
+**Account types and required fields:**
 
 | Type | Required Fields |
 |------|----------------|
-| `us` | `routing_number` (9-digit ABA), `account_number` |
-| `ca` | `institution_number`, `transit_number`, `account_number` |
-| `uk` | `sort_code`, `account_number` |
+| `us` | `routingNumber` (9-digit ABA), `accountNumber`, `accountSubtype` (checking\|savings) |
+| `ca` | `institutionNumber` (3-digit), `transitNumber` (5-digit), `accountNumber` |
+| `uk` | `sortCode` (6-digit), `accountNumber` |
 | `iban` | `iban`, optional `bic` |
 
----
+Always required: `type`, `ownership` (`personal` or `thirdParty`).
+Optional: `label`, `accountHolder` (required when `ownership` is `thirdParty` — includes `firstName`, `lastName`, `address`).
+
+**Examples:**
+
+```bash
+# US checking account
+./scripts/bank-accounts.sh create '{"type":"us","ownership":"personal","routingNumber":"021000021","accountNumber":"123456789","accountSubtype":"checking","label":"Primary Checking"}'
+
+# UK account
+./scripts/bank-accounts.sh create '{"type":"uk","ownership":"personal","sortCode":"108800","accountNumber":"00012345","label":"UK Savings"}'
+
+# IBAN account
+./scripts/bank-accounts.sh create '{"type":"iban","ownership":"personal","iban":"DE89370400440532013000","label":"EUR Account"}'
+
+# Third-party account
+./scripts/bank-accounts.sh create '{"type":"us","ownership":"thirdParty","routingNumber":"021000021","accountNumber":"987654321","accountSubtype":"checking","accountHolder":{"firstName":"Jane","lastName":"Doe","address":{"street":"123 Main St","city":"New York","state":"NY","postalCode":"10001"}}}'
+```
+
+### quotes.sh — Off-Ramp Quotes
+
+```bash
+./scripts/quotes.sh create <json_body>                  # Create an off-ramp quote
+./scripts/quotes.sh get <quoteId>                       # Get quote details/status
+./scripts/quotes.sh transaction <quoteId> <json_body>   # Get on-chain transaction params
+```
+
+**Create quote fields:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `accountId` | Yes | Destination bank account ID |
+| `amount` | Yes | Amount as decimal string |
+| `chain` | Yes | Blockchain network |
+| `amountMode` | No | `output` (exact fiat, default) or `input` (exact crypto spend) |
+| `tokenAddress` | No | Token contract address (recommended for EVM — different tokens have different fee tiers) |
+| `rail` | No | Payment rail: `ach_standard`, `rtp`, `wire`, `eft`, `sepa`, `push_to_debit`, `bill_pay` |
+| `memo` | No | Payment note (bank account payments only) |
+
+**After creating a quote, check the `fulfillment` field:**
+- `send_to_address`: Send the exact `input.amount` of `input.token` to `sendTo.address` before `sendTo.expiresAt`
+- `sign_transaction`: Call `quotes.sh transaction` with the quote ID and sender address to get calldata, then sign and submit on-chain
+
+**Transaction response:**
+- **EVM chains**: `{ contractAddress, calldata, value }` — sign and submit on-chain
+- **Solana**: `{ transactionSerialized }` — deserialize, sign, and submit
+
+**Examples:**
+
+```bash
+# Create a quote: $100 USDC on Base
+./scripts/quotes.sh create '{"accountId":"699eebce528c1c6256f9e74f","amount":"100.00","chain":"base","tokenAddress":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"}'
+
+# Check quote status
+./scripts/quotes.sh get quote_abc123
+
+# Get transaction params to sign
+./scripts/quotes.sh transaction quote_abc123 '{"senderAddress":"0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"}'
+```
+
+### off-ramps.sh — Transaction History
+
+```bash
+./scripts/off-ramps.sh list    # List off-ramp transactions
+```
+
+**Environment variables for filtering:**
+
+| Variable | Description |
+|----------|-------------|
+| `STATUS` | `awaiting_funding` \| `queued` \| `in_flight` \| `completed` \| `canceled` \| `failed` \| `reversed` \| `refunded` |
+| `CHAIN` | Filter by blockchain |
+| `ACCOUNT_ID` | Filter by destination account |
+| `LIMIT` | Max results (1-100, default 50) |
+| `CURSOR` | Pagination cursor from previous response |
+| `SORT` | `asc` \| `desc` |
+
+**Example:**
+
+```bash
+# List completed transactions
+STATUS=completed ./scripts/off-ramps.sh list
+
+# List transactions on Base
+CHAIN=base LIMIT=10 ./scripts/off-ramps.sh list
+```
+
+## Supported Chains
+
+| Chain | ID | Notes |
+|-------|----|-------|
+| Ethereum | `ethereum` | Higher gas fees |
+| Base | `base` | Recommended — low fees |
+| Polygon | `polygon` | Low fees |
+| Arbitrum | `arbitrum` | Low fees |
+| Optimism | `optimism` | Low fees |
+| Avalanche | `avalanche` | Low fees |
+| BSC | `binance-smart-chain` | Low fees |
+| Solana | `solana` | Low fees |
+| Bitcoin | `bitcoin` | |
+| Tron | `tron` | |
+| Sui | `sui` | |
+
+Additional chains: `dash`, `hyperevm`, `monad`, `sonic`, `unichain`.
+
+**Recommendation:** Use USDC on Base for lowest fees and fastest settlement.
+
+## API Reference
+
+- **Base URL**: `https://platform.spritz.finance`
+- **Auth**: `Authorization: Bearer $SPRITZ_API_KEY`
+- **Content-Type**: `application/json`
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/v1/bank-accounts/` | List bank accounts |
+| POST | `/v1/bank-accounts/` | Create bank account |
+| DELETE | `/v1/bank-accounts/{accountId}` | Delete bank account |
+| GET | `/v1/off-ramps/` | List off-ramp transactions |
+| POST | `/v1/off-ramp-quotes/` | Create off-ramp quote |
+| GET | `/v1/off-ramp-quotes/{quoteId}` | Get quote details |
+| POST | `/v1/off-ramp-quotes/{quoteId}/transaction` | Get transaction params |
 
 ## Security Rules
 
-**READ THIS SECTION. Off-ramp payments convert crypto to fiat. Mistakes are irreversible.**
+**Off-ramp payments convert crypto to fiat. Mistakes are irreversible.**
 
 ### Mandatory Rules
 
@@ -161,6 +243,6 @@ If you suspect compromise:
 1. Stop all operations immediately
 2. Do not execute pending payments
 3. Inform the user
-4. Recommend rotating the API key in the Spritz dashboard
+4. Recommend rotating the API key at [app.spritz.finance](https://app.spritz.finance)
 
 **When in doubt: ASK THE USER. It's always better to over-confirm than to send money to the wrong place.**
