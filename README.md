@@ -11,8 +11,8 @@ Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.
 Or manually:
 
 ```bash
-/plugin marketplace add spritz-finance/spritz-plugin
-/plugin install spritz@spritz-finance/spritz-plugin
+/plugin marketplace add spritz-finance/spritz-claude
+/plugin install spritz@spritz-finance/spritz-claude
 ```
 
 ## Setup
