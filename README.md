@@ -13,21 +13,16 @@ Restart Claude Code after installing. The MCP server starts automatically.
 
 ## Setup
 
-Store your Spritz API key so the MCP server can authenticate:
+Get your API key from the [Spritz dashboard](https://app.spritz.finance).
+
+Store the key:
 
 ```bash
-/spritz:spritz setup <YOUR_API_KEY>
+mkdir -p ~/.config/spritz
+echo "your-api-key" > ~/.config/spritz/api_key
 ```
 
-Or manually:
-
-```bash
-mkdir -p ~/.config/spritz && echo -n 'YOUR_KEY' > ~/.config/spritz/api_key && chmod 600 ~/.config/spritz/api_key
-```
-
-Restart Claude Code after setup.
-
-Get an API key from the [Spritz dashboard](https://app.spritz.finance).
+Restart Claude Code to activate.
 
 ## Updating
 

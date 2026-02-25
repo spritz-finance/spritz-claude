@@ -11,14 +11,13 @@ Give AI agents the ability to off-ramp crypto to real bank accounts via Spritz M
 
 ## Setup
 
-1. **Get a Spritz API key** from the [Spritz dashboard](https://app.spritz.finance)
-2. **Store the API key:**
+1. Get your API key from the [Spritz dashboard](https://app.spritz.finance)
+2. Store the key:
    ```bash
-   bash scripts/setup.sh <YOUR_API_KEY>
+   mkdir -p ~/.config/spritz
+   echo "your-api-key" > ~/.config/spritz/api_key
    ```
-   This stores your key at `~/.config/spritz/api_key`. The MCP server is configured automatically by the plugin.
-
-3. **Restart Claude Code** to activate.
+3. Restart Claude Code to activate.
 
 ### Prerequisites
 
