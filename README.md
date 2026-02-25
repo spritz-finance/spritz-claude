@@ -13,7 +13,7 @@ Restart Claude Code after installing. The MCP server starts automatically.
 
 ## Setup
 
-Get your API key from the [Spritz dashboard](https://app.spritz.finance).
+Get your API key from [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys).
 
 Store the key:
 

@@ -11,7 +11,7 @@ Give AI agents the ability to off-ramp crypto to real bank accounts via Spritz M
 
 ## Setup
 
-1. Get your API key from the [Spritz dashboard](https://app.spritz.finance)
+1. Get your API key from [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
 2. Store the key:
    ```bash
    mkdir -p ~/.config/spritz
