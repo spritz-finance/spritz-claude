@@ -1,6 +1,20 @@
 ---
 name: spritz
 description: Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools. Use when an agent needs to send payments to bank accounts, convert crypto to fiat, execute off-ramp transactions, or manage bank account payment destinations.
+metadata:
+  openclaw:
+    requires:
+      env:
+        - SPRITZ_API_KEY
+      bins:
+        - curl
+        - jq
+      config:
+        - ~/.config/spritz/api_key
+    primaryEnv: SPRITZ_API_KEY
+    os: ["macos", "linux"]
+    emoji: "💸"
+    homepage: https://spritz.finance
 ---
 
 # Spritz Fiat Rails
@@ -34,6 +48,36 @@ echo "your-api-key-here" > ~/.config/spritz/api_key
 
 - `curl`
 - `jq`
+
+## Data & Privacy
+
+**This skill sends data to `https://platform.spritz.finance` (the Spritz API). Understand what is transmitted before use.**
+
+### What this skill sends to the API
+
+- **Bank account details** — routing numbers, account numbers, sort codes, IBANs (when creating accounts)
+- **Payment instructions** — amounts, destination accounts, blockchain/token selection (when creating quotes)
+- **Wallet addresses** — sender address (when requesting transaction params)
+
+### What this skill does NOT do
+
+- Does NOT read, scan, or upload local files or directories
+- Does NOT accept database connection strings
+- Does NOT share conversation history or contexts with third parties
+- Does NOT modify system files or install software
+
+### Credential storage
+
+- API key is read from `SPRITZ_API_KEY` env var or `~/.config/spritz/api_key`
+- The key is sent as a Bearer token in the `Authorization` header on every API call
+- Scripts do not log, cache, or write the key anywhere
+
+### Before using this skill
+
+1. Confirm `https://platform.spritz.finance` is the official Spritz Finance API
+2. Use a scoped API key — do not reuse keys across unrelated services
+3. Review commands before running them, especially `bank-accounts.sh create` and `quotes.sh create`
+4. If granting an autonomous agent access, restrict it from creating bank accounts or executing payments without human approval
 
 ## Core Workflow
 

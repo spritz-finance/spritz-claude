@@ -1,6 +1,6 @@
 {
   "name": "spritz",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.",
   "author": {
     "name": "Spritz Finance",
