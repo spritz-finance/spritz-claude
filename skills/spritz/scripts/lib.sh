@@ -3,6 +3,8 @@
 # Source this file: source "$(dirname "$0")/lib.sh"
 
 BASE_URL="https://platform.spritz.finance"
+USER_AGENT="spritz-skill/1.0"
+ORIGIN="https://skill.spritz.finance"
 
 spritz_auth() {
   if [ -n "${SPRITZ_API_KEY:-}" ]; then
@@ -22,7 +24,9 @@ spritz_curl() {
   local method="$1" url="$2" data="${3:-}"
   local args=(-s -w '\n__HTTP_STATUS:%{http_code}' -X "$method" "$url" \
     -H "Authorization: Bearer $SPRITZ_KEY" \
-    -H "Content-Type: application/json")
+    -H "Content-Type: application/json" \
+    -H "User-Agent: $USER_AGENT" \
+    -H "Origin: $ORIGIN")
   if [ -n "$data" ]; then
     args+=(-d "$data")
   fi

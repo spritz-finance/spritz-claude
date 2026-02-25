@@ -6,7 +6,7 @@ Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools in [Claude 
 
 ### 1. Get your API key
 
-Sign up at [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys).
+Sign up at [app.spritz.finance/api-key](https://app.spritz.finance/api-key).
 
 ### 2. Install the plugin
 
@@ -55,7 +55,7 @@ Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC, Solana, Bitcoin, an
 
 ## Prerequisites
 
-- **Spritz API key** — [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
+- **Spritz API key** — [app.spritz.finance/api-key](https://app.spritz.finance/api-key)
 - **Node.js >= 18** — for the MCP server
 - **Claude Code** — [claude.ai/code](https://claude.ai/code)
 

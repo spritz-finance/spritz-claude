@@ -14,18 +14,20 @@ metadata:
     primaryEnv: SPRITZ_API_KEY
     os: ["macos", "linux"]
     emoji: "💸"
-    homepage: https://spritz.finance
+    homepage: https://www.spritz.finance
 ---
 
 # Spritz Fiat Rails
 
-Direct API access to [Spritz Finance](https://spritz.finance) for off-ramping crypto to real bank accounts.
+Direct API access to [Spritz Finance](https://www.spritz.finance) for off-ramping crypto to real bank accounts.
 
 ## Setup
 
 ### Get your API key
 
-Sign up at [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys).
+Either:
+- Run `bunx @spritz-finance/opencode install` (guided setup)
+- Or sign up at [app.spritz.finance/api-key](https://app.spritz.finance/api-key) to get your key
 
 ### Store the key
 
@@ -196,42 +198,6 @@ STATUS=completed ./scripts/off-ramps.sh list
 # List transactions on Base
 CHAIN=base LIMIT=10 ./scripts/off-ramps.sh list
 ```
-
-## Supported Chains
-
-| Chain | ID | Notes |
-|-------|----|-------|
-| Ethereum | `ethereum` | Higher gas fees |
-| Base | `base` | Recommended — low fees |
-| Polygon | `polygon` | Low fees |
-| Arbitrum | `arbitrum` | Low fees |
-| Optimism | `optimism` | Low fees |
-| Avalanche | `avalanche` | Low fees |
-| BSC | `binance-smart-chain` | Low fees |
-| Solana | `solana` | Low fees |
-| Bitcoin | `bitcoin` | |
-| Tron | `tron` | |
-| Sui | `sui` | |
-
-Additional chains: `dash`, `hyperevm`, `monad`, `sonic`, `unichain`.
-
-**Recommendation:** Use USDC on Base for lowest fees and fastest settlement.
-
-## API Reference
-
-- **Base URL**: `https://platform.spritz.finance`
-- **Auth**: `Authorization: Bearer $SPRITZ_API_KEY`
-- **Content-Type**: `application/json`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/bank-accounts/` | List bank accounts |
-| POST | `/v1/bank-accounts/` | Create bank account |
-| DELETE | `/v1/bank-accounts/{accountId}` | Delete bank account |
-| GET | `/v1/off-ramps/` | List off-ramp transactions |
-| POST | `/v1/off-ramp-quotes/` | Create off-ramp quote |
-| GET | `/v1/off-ramp-quotes/{quoteId}` | Get quote details |
-| POST | `/v1/off-ramp-quotes/{quoteId}/transaction` | Get transaction params |
 
 ## Security Rules
 
