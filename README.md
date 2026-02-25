@@ -50,7 +50,7 @@ The `/spritz:spritz` skill gives Claude the full workflow guide, supported netwo
 ## Prerequisites
 
 - **Spritz API key** — [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
-- **Crypto wallet** — the agent needs its own wallet for signing transactions
+- **Crypto wallet** — coming soon
 - **Node.js >= 18** — for the MCP server (`npx @spritz-finance/mcp-server`)
 
 ## License
