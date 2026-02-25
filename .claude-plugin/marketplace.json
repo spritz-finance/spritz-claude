@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "plugins": [
     {
       "name": "spritz",
       "source": "./",
       "description": "Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "author": {
         "name": "Spritz Finance",
         "email": "support@spritz.finance"
@@ -28,7 +28,13 @@
         "mcp",
         "agentic-rails"
       ],
-      "category": "External Integrations"
+      "category": "External Integrations",
+      "requires": {
+        "env": ["SPRITZ_API_KEY"],
+        "config": ["~/.config/spritz/api_key"],
+        "bins": ["curl", "jq"]
+      },
+      "primaryEnv": "SPRITZ_API_KEY"
     }
   ]
 }
