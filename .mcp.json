@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "spritz": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/start-server.sh"
+    }
+  }
+}

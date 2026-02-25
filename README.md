@@ -9,32 +9,31 @@ Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools.
 /plugin install spritz@spritz-finance/spritz-claude
 ```
 
-Restart Claude Code after installing.
+Restart Claude Code after installing. The MCP server starts automatically.
+
+## Setup
+
+Store your Spritz API key so the MCP server can authenticate:
+
+```bash
+/spritz:spritz setup <YOUR_API_KEY>
+```
+
+Or manually:
+
+```bash
+mkdir -p ~/.config/spritz && echo -n 'YOUR_KEY' > ~/.config/spritz/api_key && chmod 600 ~/.config/spritz/api_key
+```
+
+Restart Claude Code after setup.
+
+Get an API key from the [Spritz dashboard](https://app.spritz.finance).
 
 ## Updating
 
 ```bash
-/plugin uninstall spritz@spritz-finance/spritz-claude
-/plugin install spritz@spritz-finance/spritz-claude
+claude plugin update spritz@spritz-finance/spritz-claude
 ```
-
-## Setup
-
-Run the setup script with your Spritz API key:
-
-```bash
-bash scripts/setup.sh <YOUR_API_KEY>
-```
-
-This will:
-1. Store your API key at `~/.config/spritz/api_key`
-2. Add the Spritz MCP server to `~/.claude/.mcp.json`
-
-Restart Claude Code after setup.
-
-### Get an API Key
-
-Create one in the [Spritz dashboard](https://app.spritz.finance).
 
 ## What's Included
 
@@ -52,7 +51,7 @@ Create one in the [Spritz dashboard](https://app.spritz.finance).
 
 ### Skill
 
-The `spritz` skill provides Claude with the full workflow guide, supported networks/tokens, bank account types, and security rules.
+The `/spritz:spritz` skill provides Claude with the full workflow guide, supported networks/tokens, bank account types, and security rules.
 
 ## Prerequisites
 
