@@ -18,6 +18,6 @@
     "agentic-rails"
   ],
   "requires": {
-    "bins": ["spritz", "npx"]
+    "bins": ["spritz"]
   }
 }

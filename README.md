@@ -27,12 +27,16 @@ spritz auth device start --access user
 spritz auth device complete
 ```
 
-Restart Claude Code after approval. The plugin launches `spritz auth mcp
---access user` as its long-lived stdio server; running that broker manually as
-a one-time setup step only leaves it waiting for MCP protocol messages. The
-CLI reads the End User Bearer credential from the system keychain and injects
-it only into the fixed MCP child process. Do not put keys in argv, plugin JSON,
-`.env`, or `~/.config/spritz/api_key`.
+The plugin's MCP entry currently invokes `spritz auth mcp --access user`, which
+is intentionally fail-closed. The CLI does not pass a keychain credential to a
+package launched through an ambient Node/npm runtime because that is not a
+credential-security boundary against same-user local code. Completing device
+authorization does not enable this plugin's MCP tools in the current release.
+
+Do not work around the block by putting a key in argv, plugin JSON, `.env`, or
+`~/.config/spritz/api_key`. Wait for Spritz to ship an integrity-verifiable
+packaged broker. The standalone MCP server documents a disposable Sandbox/test
+operator path, but it must not be used with a Production End User account.
 
 Developer workspace access is a different principal and credential model. A
 Developer may be an individual or organization. The individual, or a person
@@ -43,25 +47,23 @@ Do not substitute one type of credential for the other.
 
 ## Usage
 
-Ask Claude to list approved destinations, create quotes, or inspect off-ramp
-status. Use `/spritz:spritz` to load the complete workflow and safety rules.
+After a compatible packaged broker ships, ask Claude to list approved
+destinations or inspect existing off-ramp and quote status. Use
+`/spritz:spritz` to load the complete workflow and safety rules.
 
 The plugin exposes:
 
 | Tool | Description |
 |------|-------------|
 | `list_bank_accounts` | List approved destinations |
-| `create_bank_account` | Add a destination after explicit human confirmation |
-| `delete_bank_account` | Delete a destination after explicit human confirmation |
-| `create_off_ramp_quote` | Create an off-ramp quote |
 | `get_off_ramp_quote` | Check quote status |
-| `get_off_ramp_transaction` | Get transaction parameters |
 | `list_off_ramps` | List off-ramp transactions |
 
-These tools act on the approving human's End User account. Creating or deleting
-a destination, creating a fundable quote, and signing or submitting a
-transaction each require fresh human confirmation. A live account carries
-real-money risk.
+These tools are GET-only and act on the approving human's End User account.
+Mutating destinations, creating a fundable quote, retrieving a transaction for
+signing, signing, and submission are deliberately absent until Spritz can
+verify a short-lived approval grant bound to the exact action. Tool metadata or
+a chat confirmation is not an authorization control.
 
 ## Updating
 
@@ -80,7 +82,8 @@ real-money risk.
 
 - Node.js 18 or newer
 - Claude Code
-- `spritz` CLI with a human-approved End User account credential
+- `spritz` CLI; the MCP integration remains unavailable until a compatible
+  integrity-verifiable packaged broker ships
 
 ## License
 

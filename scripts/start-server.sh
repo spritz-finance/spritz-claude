@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Start the MCP server through the Spritz CLI credential broker. The broker
-# injects the key into this child process without placing it on argv or reading a
-# plaintext key file.
+# This entry is intentionally fail-closed until the CLI can launch an
+# integrity-verifiable packaged MCP child. It must never fall back to a raw key.
 exec spritz auth mcp --access user
