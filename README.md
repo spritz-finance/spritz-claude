@@ -25,19 +25,20 @@ On the machine that will run Claude Code:
 spritz auth device start --access user
 # The account owner opens the returned URL and approves the requested scopes.
 spritz auth device complete
-spritz auth mcp --access user
 ```
 
-The plugin starts its MCP server through `spritz auth mcp --access user`. The
+Restart Claude Code after approval. The plugin launches `spritz auth mcp
+--access user` as its long-lived stdio server; running that broker manually as
+a one-time setup step only leaves it waiting for MCP protocol messages. The
 CLI reads the End User Bearer credential from the system keychain and injects
 it only into the fixed MCP child process. Do not put keys in argv, plugin JSON,
 `.env`, or `~/.config/spritz/api_key`.
 
-Developer workspace access is a different principal and credential model. It
-uses organization-level HMAC/scoped credentials, not this End User Bearer
-credential. `spritz auth mcp --access developer` therefore fails closed until a
-separate workspace-agent surface is implemented. Do not substitute one type of
-credential for the other.
+Developer workspace access is a different principal and credential model. A
+person acting for the responsible business creates one workspace and obtains
+organization-level HMAC credentials through the
+[Developer Access flow](https://docs.spritz.finance/guides/developer-access).
+Do not substitute one type of credential for the other.
 
 ## Usage
 
