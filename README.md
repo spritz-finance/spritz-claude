@@ -1,6 +1,7 @@
 # Spritz — Claude Code Plugin
 
-Spritz fiat-rail tools for Claude Code, backed by the Spritz MCP server.
+Spritz fiat-rail tools for Claude Code, backed by the Spritz MCP server and an
+individual Spritz **End User account**.
 
 ## Install
 
@@ -14,32 +15,29 @@ Install the `spritz` CLI as described at
 
 ## Human-approved setup
 
-An AI agent must not accept Developer Terms, complete business verification, or
-own a Production credential. A human administrator enrolls the legal entity in
-[Developer Access](https://console.spritz.finance) for **Sandbox** or requests
-**Live Test**, then approves a scoped device grant. **Production** is a separate
-commercial service with its own verification, agreements, and credentials.
+The owner of the affected Spritz account must approve access. An AI agent must
+not create the account, perform identity verification, approve its own device
+grant, or obtain a credential outside this flow.
 
 On the machine that will run Claude Code:
 
 ```bash
-spritz auth device start --access developer
-# The human opens the returned URL and approves the requested scopes.
+spritz auth device start --access user
+# The account owner opens the returned URL and approves the requested scopes.
 spritz auth device complete
-spritz auth mcp
+spritz auth mcp --access user
 ```
 
-The plugin starts its MCP server through `spritz auth mcp`, which reads the key
-from the system keychain and injects it only into the MCP child process. Do not
-put keys in argv, plugin JSON, `.env`, or `~/.config/spritz/api_key`. The broker
-starts only the reviewed Spritz MCP server; it cannot run an arbitrary command
-that prints the key.
+The plugin starts its MCP server through `spritz auth mcp --access user`. The
+CLI reads the End User Bearer credential from the system keychain and injects
+it only into the fixed MCP child process. Do not put keys in argv, plugin JSON,
+`.env`, or `~/.config/spritz/api_key`.
 
-The current device endpoint is an existing Spritz **user-account** flow, not a
-Developer Access workspace flow. Developer mode therefore fails closed until
-Laurence’s platform endpoints are deployed, and the plugin cannot start its MCP
-server locally. Never work around that response by giving an agent a user or raw
-Production key.
+Developer workspace access is a different principal and credential model. It
+uses organization-level HMAC/scoped credentials, not this End User Bearer
+credential. `spritz auth mcp --access developer` therefore fails closed until a
+separate workspace-agent surface is implemented. Do not substitute one type of
+credential for the other.
 
 ## Usage
 
@@ -58,9 +56,10 @@ The plugin exposes:
 | `get_off_ramp_transaction` | Get transaction parameters |
 | `list_off_ramps` | List off-ramp transactions |
 
-Creating or deleting a destination, creating a fundable quote, and signing or
-submitting a transaction each require fresh human confirmation. Sandbox uses
-simulated funds; Live Test and Production carry real-money risk.
+These tools act on the approving human's End User account. Creating or deleting
+a destination, creating a fundable quote, and signing or submitting a
+transaction each require fresh human confirmation. A live account carries
+real-money risk.
 
 ## Updating
 
@@ -69,11 +68,17 @@ simulated funds; Live Test and Production carry real-money risk.
 /plugin update spritz@spritz-claude
 ```
 
+## Development
+
+```bash
+./scripts/validate.sh
+```
+
 ## Requirements
 
 - Node.js 18 or newer
 - Claude Code
-- `spritz` CLI with a human-approved Developer Access workspace credential
+- `spritz` CLI with a human-approved End User account credential
 
 ## License
 

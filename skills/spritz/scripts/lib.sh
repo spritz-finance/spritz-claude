@@ -11,7 +11,7 @@ spritz_auth() {
     SPRITZ_KEY="$SPRITZ_API_KEY"
   fi
   if [ -z "${SPRITZ_KEY:-}" ]; then
-    echo "Error: No Spritz credential was explicitly injected. Prefer the MCP tools started by: spritz auth mcp"
+    echo "Error: No Spritz credential was explicitly injected. Prefer the MCP tools started by: spritz auth mcp --access user"
     exit 1
   fi
   export SPRITZ_KEY

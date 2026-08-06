@@ -9,41 +9,35 @@ Direct API access to [Spritz Finance](https://www.spritz.finance) for off-rampin
 
 ## Setup
 
-### Require human-approved access
+### Require human-approved End User access
 
-Do not accept Developer Terms, perform KYC/KYB, or create/own a Production
-credential on the user's behalf. Direct a human administrator to
-`https://console.spritz.finance` to enroll the legal entity and select the
-appropriate stage:
+These tools act on an individual Spritz End User account. Do not create an
+account, perform identity verification, approve a device grant, or obtain a
+credential on the user's behalf. The owner of the affected account must
+initiate or approve access.
 
-- **Sandbox** — simulated funds after Developer Terms acceptance
-- **Live Test** — real money within approved limits after preliminary business
-  verification and compliance approval
-- **Production** — real money after full business verification and executed
-  commercial agreements
-
-On a local machine, the human initiates and approves device access:
+On a local machine, the account owner initiates and approves device access:
 
 ```bash
-spritz auth device start --access developer
+spritz auth device start --access user
 spritz auth device complete
 ```
 
-The current device flow authorizes a Spritz user account, not a Developer
-Access workspace. `spritz auth device start --access developer` must fail closed
-until the platform enables the workspace flow. Never route around that result by
-asking for a raw user or Production key.
-
-Start the MCP server through the credential broker only after the Developer
-Access grant succeeds:
+Start the MCP server through the End User credential broker after the grant
+succeeds:
 
 ```bash
-spritz auth mcp
+spritz auth mcp --access user
 ```
 
 If the Spritz MCP tools are unavailable, stop and ask the human administrator
-to complete Developer Access. Do not request a raw key or substitute the current
-user-account device flow.
+to approve End User account access. Do not request a raw key.
+
+Developer workspace access is a separate principal and credential model. It
+uses organization-level HMAC/scoped authorization, not this End User Bearer
+credential. `spritz auth mcp --access developer` remains disabled until a
+separate workspace-agent tool contract is implemented. Never substitute one
+principal's credential for the other.
 
 ### Requirements
 
@@ -69,7 +63,7 @@ user-account device flow.
 
 ### Credential storage
 
-- API key is injected only into the fixed MCP child process by `spritz auth mcp`; secret-managed CI may inject `SPRITZ_API_KEY` explicitly
+- End User API key is injected only into the fixed MCP child process by `spritz auth mcp --access user`; secret-managed CI may inject `SPRITZ_API_KEY` explicitly
 - The key is sent as a Bearer token in the `Authorization` header on every API call
 - Scripts do not log, cache, or write the key anywhere
 - Scripts never read a plaintext credential file
@@ -253,6 +247,6 @@ If you suspect compromise:
 1. Stop all operations immediately
 2. Do not execute pending payments
 3. Inform the user
-4. Recommend revoking or rotating the key in the [Developer Console](https://console.spritz.finance/settings/api-keys)
+4. Recommend revoking or rotating the key at [app.spritz.finance/api-keys](https://app.spritz.finance/api-keys)
 
 **When in doubt: ASK THE USER. It's always better to over-confirm than to send money to the wrong place.**
