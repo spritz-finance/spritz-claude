@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-# Wrapper that loads the API key from ~/.config/spritz/api_key and starts the MCP server.
-
-KEY_FILE="$HOME/.config/spritz/api_key"
-
-if [ -z "${SPRITZ_API_KEY:-}" ] && [ -f "$KEY_FILE" ]; then
-  export SPRITZ_API_KEY="$(cat "$KEY_FILE")"
-fi
-
-exec npx -y @spritz-finance/mcp-server "$@"
+# This entry is intentionally fail-closed until the CLI can launch an
+# integrity-verifiable packaged MCP child. It must never fall back to a raw key.
+exec spritz auth mcp --access user
