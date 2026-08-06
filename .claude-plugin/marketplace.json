@@ -30,11 +30,8 @@
       ],
       "category": "External Integrations",
       "requires": {
-        "env": ["SPRITZ_API_KEY"],
-        "config": ["~/.config/spritz/api_key"],
-        "bins": ["curl", "jq"]
-      },
-      "primaryEnv": "SPRITZ_API_KEY"
+        "bins": ["spritz", "npx", "curl", "jq"]
+      }
     }
   ]
 }

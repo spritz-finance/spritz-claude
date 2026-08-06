@@ -9,11 +9,9 @@ ORIGIN="https://skill.spritz.finance"
 spritz_auth() {
   if [ -n "${SPRITZ_API_KEY:-}" ]; then
     SPRITZ_KEY="$SPRITZ_API_KEY"
-  else
-    SPRITZ_KEY=$(cat ~/.config/spritz/api_key 2>/dev/null || echo "")
   fi
-  if [ -z "$SPRITZ_KEY" ]; then
-    echo "Error: No API key found. Set SPRITZ_API_KEY env variable or run: echo 'your-key' > ~/.config/spritz/api_key"
+  if [ -z "${SPRITZ_KEY:-}" ]; then
+    echo "Error: No Spritz credential was explicitly injected. Prefer the MCP tools started by: spritz auth mcp"
     exit 1
   fi
   export SPRITZ_KEY

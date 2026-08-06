@@ -1,20 +1,6 @@
 ---
 name: spritz
 description: Off-ramp crypto to fiat bank accounts using Spritz Finance MCP tools. Use when an agent needs to send payments to bank accounts, convert crypto to fiat, execute off-ramp transactions, or manage bank account payment destinations.
-metadata:
-  openclaw:
-    requires:
-      env:
-        - SPRITZ_API_KEY
-      bins:
-        - curl
-        - jq
-      config:
-        - ~/.config/spritz/api_key
-    primaryEnv: SPRITZ_API_KEY
-    os: ["macos", "linux"]
-    emoji: "💸"
-    homepage: https://www.spritz.finance
 ---
 
 # Spritz Fiat Rails
@@ -23,28 +9,41 @@ Direct API access to [Spritz Finance](https://www.spritz.finance) for off-rampin
 
 ## Setup
 
-### Get your API key
+### Require human-approved access
 
-Either:
-- Run `bunx @spritz-finance/opencode install` (guided setup)
-- Or sign up at [app.spritz.finance/api-key](https://app.spritz.finance/api-key) to get your key
+Do not accept Developer Terms, perform KYC/KYB, or create/own a Production
+credential on the user's behalf. Direct a human administrator to
+`https://console.spritz.finance` to enroll the legal entity and select the
+appropriate stage:
 
-### Store the key
+- **Sandbox** — simulated funds after Developer Terms acceptance
+- **Live Test** — real money within approved limits after preliminary business
+  verification and compliance approval
+- **Production** — real money after full business verification and executed
+  commercial agreements
 
-Set the `SPRITZ_API_KEY` environment variable:
+On a local machine, the human initiates and approves device access:
 
 ```bash
-export SPRITZ_API_KEY="your-api-key-here"
+spritz auth device start --access developer
+spritz auth device complete
 ```
 
-Or store it in a config file:
+The current device flow authorizes a Spritz user account, not a Developer
+Access workspace. `spritz auth device start --access developer` must fail closed
+until the platform enables the workspace flow. Never route around that result by
+asking for a raw user or Production key.
+
+Start the MCP server through the credential broker only after the Developer
+Access grant succeeds:
 
 ```bash
-mkdir -p ~/.config/spritz
-echo "your-api-key-here" > ~/.config/spritz/api_key
+spritz auth mcp
 ```
 
-> **Note:** `SPRITZ_API_KEY` environment variable takes precedence over the config file.
+If the Spritz MCP tools are unavailable, stop and ask the human administrator
+to complete Developer Access. Do not request a raw key or substitute the current
+user-account device flow.
 
 ### Requirements
 
@@ -70,16 +69,17 @@ echo "your-api-key-here" > ~/.config/spritz/api_key
 
 ### Credential storage
 
-- API key is read from `SPRITZ_API_KEY` env var or `~/.config/spritz/api_key`
+- API key is injected only into the fixed MCP child process by `spritz auth mcp`; secret-managed CI may inject `SPRITZ_API_KEY` explicitly
 - The key is sent as a Bearer token in the `Authorization` header on every API call
 - Scripts do not log, cache, or write the key anywhere
+- Scripts never read a plaintext credential file
 
 ### Before using this skill
 
 1. Confirm `https://platform.spritz.finance` is the official Spritz Finance API
 2. Use a scoped API key — do not reuse keys across unrelated services
-3. Review commands before running them, especially `bank-accounts.sh create` and `quotes.sh create`
-4. If granting an autonomous agent access, restrict it from creating bank accounts or executing payments without human approval
+3. Prefer the reviewed MCP tools; use bundled direct scripts only in explicitly secret-managed CI
+4. Require explicit human confirmation before creating/deleting destinations, creating a fundable quote, or signing/submitting a transaction
 
 ## Core Workflow
 
@@ -253,6 +253,6 @@ If you suspect compromise:
 1. Stop all operations immediately
 2. Do not execute pending payments
 3. Inform the user
-4. Recommend rotating the API key at [app.spritz.finance](https://app.spritz.finance)
+4. Recommend revoking or rotating the key in the [Developer Console](https://console.spritz.finance/settings/api-keys)
 
 **When in doubt: ASK THE USER. It's always better to over-confirm than to send money to the wrong place.**
