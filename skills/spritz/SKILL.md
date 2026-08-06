@@ -1,6 +1,6 @@
 ---
 name: spritz
-description: Use human-approved Spritz End User fiat-rail MCP tools for bank destinations, off-ramp quotes, transaction preparation, and status checks. Use when an agent needs crypto-to-fiat payment capabilities while preserving principal, credential, confirmation, and environment boundaries.
+description: Use human-approved Spritz End User account tools for bank destinations, off-ramp quotes, transaction preparation, and status checks. Use when an agent needs crypto-to-fiat payment capabilities while preserving principal, credential, confirmation, and environment boundaries.
 ---
 
 # Spritz Fiat Rails
@@ -15,9 +15,10 @@ affected account must approve device access. Never create the account, complete
 identity verification, approve a device grant, or request a raw key for the
 user.
 
-Developer integrations are a separate organization principal. A person acting
-for the responsible business creates one Developer workspace, accepts the
-current terms, and receives an HMAC credential for approved development use.
+Developer integrations use a separate principal for an individual or organization.
+The individual, or a person authorized for the organization, creates one Developer
+workspace, accepts the current terms, and receives an HMAC credential for approved
+development use.
 Never give that credential to this End User tool surface or substitute an End
 User credential for a Developer workspace.
 
